@@ -3,73 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كورة لايف - Koora Live | بث مباشر للمباريات</title>
+    <title>صدى الطفولة | شارات الكرتون</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tahoma', sans-serif; }
-        body { background-color: #0f1f17; color: #fff; line-height: 1.6; }
+        :root { --primary: #00d2ff; --accent: #ff9800; --bg: #0b0f19; --card: #161e2e; }
+        * { user-select: none; box-sizing: border-box; }
+        body { background-color: var(--bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; position: relative; scroll-behavior: smooth; }
+        header { width: 100%; background: linear-gradient(135deg, #00d2ff, #3a7bd5); padding: 30px 0; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         
-        /* الهيدر */
-        header { background: linear-gradient(135deg, #1b4d3e, #0b221a); padding: 20px; text-align: center; border-bottom: 3px solid #2ecc71; }
-        header h1 { color: #2ecc71; font-size: 2.2rem; margin-bottom: 5px; }
-        header p { color: #aaa; font-size: 1rem; }
-
-        /* المحتوى الرئيسي */
-        .container { max-width: 900px; margin: 30px auto; padding: 0 15px; }
+        .banner-top, .banner-bottom { width: 100%; text-align: center; background: #0a0e15; padding: 20px 0; margin: 0 auto; display: flex; justify-content: center; align-items: center; border-radius: 12px; overflow-x: auto; }
+        .banner-top { max-width: 900px; margin-top: 20px; margin-bottom: 10px; }
+        .banner-bottom { max-width: 900px; margin-top: 30px; margin-bottom: 20px; }
         
-        /* قسم المباراة */
-        .match-card { background: #162b22; border-radius: 12px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); border: 1px solid #224d3a; }
-        .match-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #224d3a; padding-bottom: 15px; }
-        .match-title { font-size: 1.3rem; font-weight: bold; color: #f1c40f; }
-        .live-badge { background: #e74c3c; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; animation: pulse 1.5s infinite; }
+        .main-container { max-width: 900px; width: 95%; margin: 0 auto; text-align: center; }
+        
+        .back-home-btn { background: #252f44; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo', sans-serif; font-weight: bold; cursor: pointer; margin: 20px 0; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        .back-home-btn:hover { background: var(--primary); color: #000; }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
+        .video-wrapper-outer { position: relative; z-index: 1; width: 100%; }
+        .video-display-area { background: #000; border-radius: 20px; overflow: hidden; border: 3px solid var(--primary); box-shadow: 0 0 30px rgba(0, 210, 255, 0.2); margin-bottom: 30px; display: none; position: relative; scroll-margin-top: 20px; }
+        .responsive-iframe { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
+        .responsive-iframe iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; overflow: hidden; pointer-events: auto; }
+        
+        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; background: var(--card); padding: 25px; border-radius: 20px; }
+        .ep-btn { background: #252f44; color: white; border: 2px solid transparent; padding: 12px 10px; border-radius: 12px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Cairo', sans-serif; }
+        .ep-btn:hover { background: var(--primary); transform: scale(1.05); border-color: white; color: #000; }
+        .ep-btn.active { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
 
-        .teams { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; font-size: 1.2rem; font-weight: bold; }
-        .team { text-align: center; }
-        .vs { color: #2ecc71; font-size: 1.5rem; }
-
-        /* مشغل البث */
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-
-        /* تذييل الصفحة */
-        footer { text-align: center; padding: 20px; margin-top: 40px; background: #0b221a; color: #7f8c8d; font-size: 0.9rem; }
+        .info-text { margin-top: 20px; color: var(--primary); }
+        footer { margin-top: 50px; padding: 20px; opacity: 0.4; text-align: center; }
+        @media (max-width: 600px) { .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; padding: 15px; } .ep-btn { padding: 10px 5px; font-size: 0.85rem; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>كورة لايف | Koora Live</h1>
-        <p>موقعك الأول لمتابعة المباريات بث مباشر بجودة عالية</p>
-    </header>
+<header>
+    <h1>🎵 شارات الكرتون والذكريات</h1>
+    <p>اختر اسم الشارة وابدأ الاستماع والمشاهدة فوراً</p>
+</header>
 
-    <div class="container">
-        <div class="match-card">
-            <div class="match-header">
-                <span class="match-title">الدوري الإسباني - بث مباشر حصري</span>
-                <span class="live-badge">🔴 LIVE NOW</span>
-            </div>
+<!-- إعلان البنر العلوي -->
+<div class="banner-top">
+    <script> atOptions = { 'key' : 'b8ba5b25ff25e41ea44c2df3a1b05378', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} }; </script>
+    <script src="https://www.highperformanceformat.com/b8ba5b25ff25e41ea44c2df3a1b05378/invoke.js"></script>
+</div>
 
-            <div class="teams">
-                <div class="team">برشلونة (Barcelona)</div>
-                <div class="vs">VS</div>
-                <div class="team">إلشي (Elche)</div>
-            </div>
+<div class="main-container">
+    <a href="https://husamalu637.github.io/Sasuke/" class="back-home-btn">⬅ العودة إلى الرئيسية</a>
 
-            <!-- إطار البث المباشر الذي أرسلته -->
-            <div class="video-container">
-                <iframe src="https://912acsss8af382.fabortvcdn.com/playerv5.php?match=4750898&key=9f39972b67d6ce22189507d008acwc26" allowfullscreen scrolling="no"></iframe>
-            </div>
+    <div class="video-wrapper-outer">
+        <div id="videoPlayer" class="video-display-area">
+            <div class="responsive-iframe"><iframe id="mainIframe" src="" allowfullscreen allow="autoplay; encrypted-media" scrolling="no"></iframe></div>
+            <div id="episodeTitle" style="padding: 10px; background: var(--card); font-weight: bold;"></div>
         </div>
     </div>
 
-    <footer>
-        <p>جميع الحقوق محفوظة © كورة لايف 2026</p>
-    </footer>
+    <h2>اضغط على اسم الشارة للمشاهدة:</h2>
+    <div class="episodes-grid" id="buttonsGrid"></div>
+    <p class="info-text">أجمل شارات الذكريات متوفرة وتعمل بكفاءة عالية</p>
+</div>
 
+<!-- إعلان البنر السفلي -->
+<div class="banner-bottom">
+    <script> atOptions = { 'key' : 'b8ba5b25ff25e41ea44c2df3a1b05378', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} }; </script>
+    <script src="https://www.highperformanceformat.com/b8ba5b25ff25e41ea44c2df3a1b05378/invoke.js"></script>
+</div>
+
+<footer>جميع الحقوق محفوظة - صدى الطفولة &copy; 2026</footer>
+
+<script>
+    const popupAdLink = "https://www.profitablecpmratenetwork.com/e41dj2h87?key=bef514b5ca3fa945e7a3b60e4a9ef21a";
+
+    // قائمة الشارات مع روابطها وأسمائها
+    const playlist = [
+        { name: "القناص", url: "https://www.youtube.com/embed/JOz8CVQjTuA" },
+        { name: "عهد الأصدقاء", url: "https://www.youtube.com/embed/BYmcd8I4qcQ" },
+        { name: "حكايات ما أحلاها", url: "https://www.youtube.com/embed/7Kgvo2CYm7Y" },
+        { name: "أسرار المحيط", url: "https://www.youtube.com/embed/ZlVFegYA0fo" },
+        { name: "سابق ولاحق", url: "https://www.youtube.com/embed/aVps7M4DH4s" },
+        { name: "بوكيمون", url: "https://www.youtube.com/embed/MCU3Bya2v9A" },
+        { name: "أسرار المحيط (2)", url: "https://www.youtube.com/embed/a259sXecaRQ" },
+        { name: "السيف القاطع", url: "https://www.youtube.com/embed/QsqyVxYmvf4" },
+        { name: "هزيم الرعد", url: "https://www.youtube.com/embed/wcMh6jHdC5Q" },
+        { name: "دراغون بول", url: "https://www.youtube.com/embed/Ad5KfP3r1lE" },
+        { name: "بيدامان", url: "https://www.youtube.com/embed/vks-_324yFM" },
+        { name: "يداتين جمب", url: "https://www.youtube.com/embed/Wn73m6Fi7Cw" },
+        { name: "همتارو", url: "https://www.youtube.com/embed/eeOlXP63S1g" },
+        { name: "أنا وأخي", url: "https://www.youtube.com/embed/7t_Ht6v4GkQ" },
+        { name: "أنا وأختي", url: "https://www.youtube.com/embed/dB95J8Pa49c" },
+        { name: "أنا وأخواتي", url: "https://www.youtube.com/embed/XK-HpBsbu-c" },
+        { name: "مغامرات نغم", url: "https://www.youtube.com/embed/2QbKVD2DjTM" },
+        { name: "الحديقة السرية", url: "https://www.youtube.com/embed/KyWUlkKD_yY" },
+        { name: "إيروكا", url: "https://www.youtube.com/embed/X1Hu_ms7BuE" },
+        { name: "إيروكا (النهاية)", url: "https://www.youtube.com/embed/dYBBYhytx6I" },
+        { name: "بائعة الكبريت", url: "https://www.youtube.com/embed/71aau2qMeXo" },
+        { name: "دروب ريمي", url: "https://www.youtube.com/embed/8yHf-RIEiOU" },
+        { name: "الطاقة الزرقاء", url: "https://www.youtube.com/embed/S3ZuPbgiJac" },
+        { name: "أدغال الديجيتال", url: "https://www.youtube.com/embed/EMGjiPvo89I" },
+        { name: "أبطال الديجيتال 1", url: "https://www.youtube.com/embed/F2pw97R4160" },
+        { name: "أبطال الديجيتال 2", url: "https://www.youtube.com/embed/ZWdg7QYjZcE" },
+        { name: "أبطال الديجيتال 3", url: "https://www.youtube.com/embed/9Uc-8s7ELxg" },
+        { name: "دوري يا أرضنا", url: "https://www.youtube.com/embed/-BVg2AU7p0o" },
+        { name: "الخطوة تدفع خطوة", url: "https://www.youtube.com/embed/9lK5mDxYRJw" },
+        { name: "أبطال الديجيتال 4", url: "https://www.youtube.com/embed/5qKg6PKWBtA" },
+        { name: "نسيم الصباح", url: "https://www.youtube.com/embed/Mm-wqnMdAoM" },
+        { name: "لا تبكي يا صغيري", url: "https://www.youtube.com/embed/mry3LHY29BE" },
+        { name: "شما في البراري", url: "https://www.youtube.com/embed/FdrYTzJMfy0" },
+        { name: "سالي", url: "https://www.youtube.com/embed/rr_qocIS0QQ" },
+        { name: "ماوكلي", url: "https://www.youtube.com/embed/NqTQPCQB_vU" },
+        { name: "بي بليد", url: "https://www.youtube.com/embed/u8eT0bblzzw" },
+        { name: "ماوكلي فتى الأدغال", url: "https://www.youtube.com/embed/ppCXd9Wn0XA" },
+        { name: "سلام دانك", url: "https://www.youtube.com/embed/WevtBmOU5qY" },
+        { name: "الكابتن ماجد 1", url: "https://www.youtube.com/embed/l0ibozG6mL0" },
+        { name: "الكابتن ماجد 2", url: "https://www.youtube.com/embed/eV4QsmMFSTk" },
+        { name: "الكابتن ماجد 3", url: "https://www.youtube.com/embed/y_hGiiGp0Xc" },
+        { name: "الكابتن ماجد 4", url: "https://www.youtube.com/embed/8HxJ-l_Tgy8" },
+        { name: "الكابتن ماجد 5", url: "https://www.youtube.com/embed/6Q59SbnUGxI" },
+        { name: "أراغاي", url: "https://www.youtube.com/embed/f6CPO9xWoTw" },
+        { name: "عدنان ولينا", url: "https://www.youtube.com/embed/OdJBb49LjjA" },
+        { name: "سوبر سونيك سبنر", url: "https://www.youtube.com/embed/_J-T8-ntCWQ" },
+        { name: "الصياد الجريء", url: "https://www.youtube.com/embed/Jfk7MDwhhpY" },
+        { name: "باص المدرسة العجيب", url: "https://www.youtube.com/embed/pctpiLeVZAU" },
+        { name: "مدينة النخيل", url: "https://www.youtube.com/embed/WPeArLLXwZg" },
+        { name: "الماسة الزرقاء", url: "https://www.youtube.com/embed/oLk3S-NBWUs" },
+        { name: "سندريلا", url: "https://www.youtube.com/embed/IctskdnjslM" },
+        { name: "باباي", url: "https://www.youtube.com/embed/dTt0OhLAmXA" },
+        { name: "بابار فيل", url: "https://www.youtube.com/embed/BwRtzDVS84U" },
+        { name: "مغامرات سندباد", url: "https://www.youtube.com/embed/ZoI6Fl_EC9g" },
+        { name: "روبن هود", url: "https://www.youtube.com/embed/m5oUqLmkk08" },
+        { name: "ليدي ليدي", url: "https://www.youtube.com/embed/YxlAucJgDkQ" },
+        { name: "اسطورة زورو", url: "https://www.youtube.com/embed/zr5Brf3fULM" },
+        { name: "شوت", url: "https://www.youtube.com/embed/BicsIpASXCc" },
+        { name: "المقاتل النبيل", url: "https://www.youtube.com/embed/pcrSBmF9zh4" },
+        { name: "أوف سايد", url: "https://www.youtube.com/embed/ZEW5BHx6urU" },
+        { name: "المحقق كونان", url: "https://www.youtube.com/embed/B8I9PzukMJQ" },
+        { name: "لحن الحياة", url: "https://www.youtube.com/embed/Mh85CCQ_BTk" },
+        { name: "في جعبتي حكايا", url: "https://www.youtube.com/embed/cmnKTBiffiI" },
+        { name: "سوبر مان", url: "https://www.youtube.com/embed/Xf-XtPQ7lzQ" },
+        { name: "بات مان", url: "https://www.youtube.com/embed/bu6EBd3rPmI" },
+        { name: "أجنحة الكاندام", url: "https://www.youtube.com/embed/_bIqva4VNt0" },
+        { name: "أرض الخيول", url: "https://www.youtube.com/embed/RuAKew_qImI" },
+        { name: "مدينة الصفصاف", url: "https://www.youtube.com/embed/UBBlIH3xfp8" },
+        { name: "مغامرات سوسان", url: "https://www.youtube.com/embed/xJckPgkxz4s" },
+        { name: "حكاية فرحان", url: "https://www.youtube.com/embed/9Qam1ixi3qY" },
+        { name: "أمي ضمي يدي", url: "https://www.youtube.com/embed/Y_lzmNH-Wh8" },
+        { name: "أنت الأمان (أمي)", url: "https://www.youtube.com/embed/MqGde9t_yWY" },
+        { name: "أشتاق لبرك يا أمي", url: "https://www.youtube.com/embed/fhRyx3Q6jJY" },
+        { name: "أمي كم أهواها", url: "https://www.youtube.com/embed/DjSdU7gCPd0" },
+        { name: "أناستازيا (ديسمبر)", url: "https://www.youtube.com/embed/LN-AeGSvISM" },
+        { name: "آه لو في الأحلام", url: "https://www.youtube.com/embed/-WU_M-AWiq8" },
+        { name: "القط الأسود", url: "https://www.youtube.com/embed/P0hzk7xI1b4" },
+        { name: "جزيرة الكنز", url: "https://www.youtube.com/embed/_kDRGVpQloo" },
+        { name: "جواهر", url: "https://www.youtube.com/embed/PGazLILHoJ8" },
+        { name: "رنين الجواهر", url: "https://www.youtube.com/embed/yX__ttJnHt8" },
+        { name: "أسرار ليلى", url: "https://www.youtube.com/embed/Lk5xPc9SE4Q" },
+        { name: "كرش جير", url: "https://www.youtube.com/embed/qQK-VtU8FiA" },
+        { name: "صقور الارض", url: "https://www.youtube.com/embed/PF_1lcQkhCU" },
+        { name: "داي الشجاع", url: "https://www.youtube.com/embed/U_om7zTMQ6I" },
+        { name: "دايس", url: "https://www.youtube.com/embed/_v0vNd6A5Y4" },
+        { name: "فلة والأقزام السبعة", url: "https://www.youtube.com/embed/7wY71p7tC_Y" },
+        { name: "نودي", url: "https://www.youtube.com/embed/rL3ikvsw1eA" },
+        { name: "الضربة الصاعقة", url: "https://www.youtube.com/embed/0UPzhsFR92Q" },
+        { name: "دراغون بوستر", url: "https://www.youtube.com/embed/jWxZ0vNcxiY" },
+        { name: "مغامرات حنين 1", url: "https://www.youtube.com/embed/U7sM1CSSWIY" },
+        { name: "دروبي", url: "https://www.youtube.com/embed/Fc0LTrUSxKE" },
+        { name: "مغامرات حنين 2", url: "https://www.youtube.com/embed/bw8KDXqMJY0" },
+        { name: "إيميلي", url: "https://www.youtube.com/embed/_McjTc1Qp9s" },
+        { name: "سنوحي", url: "https://www.youtube.com/embed/Xrwy4bNg9Ho" },
+        { name: "مدينة المعلومات", url: "https://www.youtube.com/embed/3sM1u-iqHU8" },
+        { name: "كاسبر", url: "https://www.youtube.com/embed/SefHkgxXWss" },
+        { name: "أبناء توم وجيري", url: "https://www.youtube.com/embed/Kcro2twDMCw" },
+        { name: "ستروبري شورت كيك", url: "https://www.youtube.com/embed/9DS88Arid7U" },
+        { name: "سيمبا", url: "https://www.youtube.com/embed/EQuHkjt4WhQ" },
+        { name: "راسكال", url: "https://www.youtube.com/embed/-1kpb-_TEDQ" },
+        { name: "بليزين تينز", url: "https://www.youtube.com/embed/k1upRyUhXKI" },
+        { name: "القط الأسود (سباي باور)", url: "https://www.youtube.com/embed/SLI2ZVdv2vI" },
+        { name: "سلفستر وتويتي", url: "https://www.youtube.com/embed/zjTuPPtvnEE" },
+        { name: "عبقور", url: "https://www.youtube.com/embed/K1lZ2TjfYC0" },
+        { name: "المخترع الصغير", url: "https://www.youtube.com/embed/h2s5sw4z9gU" },
+        { name: "منطاد الأحلام", url: "https://www.youtube.com/embed/eZCc-HtMvzc" },
+        { name: "بوليانا", url: "https://www.youtube.com/embed/xfhxQe_W_ZI" },
+        { name: "صاحب الظل الطويل", url: "https://www.youtube.com/embed/QX3V2jUbk5w" },
+        { name: "نوار", url: "https://www.youtube.com/embed/bO9TK5iDbF4" },
+        { name: "جنى", url: "https://www.youtube.com/embed/S9xemtXziE8" },
+        { name: "البؤساء", url: "https://www.youtube.com/embed/KhY_UZWyVMA" },
+        { name: "فيروزة", url: "https://www.youtube.com/embed/z_4U_UmLGtw" },
+        { name: "ساندي بيل", url: "https://www.youtube.com/embed/8eZiX9HSU40" },
+        { name: "ساندي بيل (نهاية)", url: "https://www.youtube.com/embed/0_jO87HBA2E" }
+    ];
+
+    const grid = document.getElementById('buttonsGrid'); 
+    const player = document.getElementById('videoPlayer'); 
+    const iframe = document.getElementById('mainIframe'); 
+    const titleDisp = document.getElementById('episodeTitle');
+
+    playlist.forEach((item) => { 
+        const btn = document.createElement('button'); 
+        btn.className = 'ep-btn'; 
+        btn.innerText = item.name; 
+        
+        btn.onclick = function() { 
+            window.open(popupAdLink, '_blank');
+            
+            player.style.display = 'block'; 
+            iframe.src = item.url; 
+            titleDisp.innerText = "أنت تستمع الآن إلى شارة: " + item.name; 
+            
+            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active')); 
+            btn.classList.add('active'); 
+            
+            // الانتقال التلقائي السلس إلى مشغل الفيديو
+            player.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }; 
+        grid.appendChild(btn); 
+    });
+</script>
 </body>
 </html>
